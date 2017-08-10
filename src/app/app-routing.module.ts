@@ -101,6 +101,15 @@ export const routes: Routes = [
     }
   },
 
+  {
+    path: ':entity/:space/plan/detail',
+    loadChildren: './space/plan/detail/detail.module#DetailModule',
+    data: {
+      title: 'Plan: Dailet',
+      featureName: 'Planner'
+    }
+  },
+
   // Create
   {
     path: ':entity/:space/create',
