@@ -21,7 +21,10 @@ import { DummyService } from 'app/shared/dummy.service';
 import { SpaceNamespaceService } from 'app/shared/runtime-console/space-namespace.service';
 import { SpacesService } from 'app/shared/spaces.service';
 
+import { Store } from '@ngrx/store';
 import { FeatureTogglesService } from '../../feature-flag/service/feature-toggles.service';
+import { AppState } from '../../shared/states/app.state';
+import * as SpaceActions from './../../shared/actions/space.action';
 
 @Component({
   selector: 'space-wizard',
@@ -29,6 +32,7 @@ import { FeatureTogglesService } from '../../feature-flag/service/feature-toggle
   styleUrls: ['./space-wizard.component.less']
 })
 export class SpaceWizardComponent implements OnInit, OnDestroy {
+  private spaceSource;
 
   @Output('onSelect') onSelect = new EventEmitter();
   @Output('onCancel') onCancel = new EventEmitter();
@@ -41,6 +45,7 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
   currentSpace: Space;
 
   constructor(
+    private store: Store<AppState>,
     private broadcaster: Broadcaster,
     private featureTogglesService: FeatureTogglesService,
     private router: Router,
@@ -60,6 +65,13 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
     this.subscriptions.push(featureTogglesService.getFeature('AppLauncher').subscribe((feature) => {
       this.appLauncherEnabled = feature.attributes['enabled'] && feature.attributes['user-enabled'];
     }));
+    this.spaceSource = this.store
+      .select('listPage')
+      .select('space');
+     // .do(s => {if (!s) { this.store.dispatch(new SpaceActions.Get()); }});
+    // this.subscriptions.push(this.spaceSource.subscribe(e => {
+    //   console.log(`space fetched`);
+    // }));
   }
 
   ngOnDestroy() {
@@ -84,7 +96,8 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
       });
       return;
     }
-
+    // TODO atm we check the anme of a space is unique by sending http on each entry from the user
+    // is checking on the local store enough and dealing with conflict error
     console.log('Creating space', this.space, this.userService.currentLoggedInUser.id);
     if (!this.space) {
       this.space = this.createTransientSpace();
@@ -92,31 +105,37 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
     this.space.attributes.name = this.space.name.replace(/ /g, '_');
 
     this.space.relationships['owned-by'].data.id = this.userService.currentLoggedInUser.id;
-    this.spaceService.create(this.space)
-    .do(createdSpace => {
-      this.spacesService.addRecent.next(createdSpace);
-    })
-    .switchMap(createdSpace => {
-      return this.spaceNamespaceService
-        .updateConfigMap(Observable.of(createdSpace))
-        .map(() => createdSpace)
-        // Ignore any errors coming out here, we've logged and notified them earlier
-        .catch(err => Observable.of(createdSpace));
-    })
-    .subscribe(createdSpace => {
-        this.router.navigate([createdSpace.relationalData.creator.attributes.username,
-          createdSpace.attributes.name]);
-        this.finish();
-      },
-      err => {
-        this.errorHandler.handleError(err);
-        this.logger.error(err);
-        this.notifications.message(<Notification> {
-          message: `Failed to create "${this.space.name}"`,
-          type: NotificationType.DANGER
-        });
-        this.finish();
-      });
+
+    this.store.dispatch(new SpaceActions.Add({
+      spaceName: this.space.name,
+      ownerId: this.userService.currentLoggedInUser.id
+    }));
+
+    // this.spaceService.create(this.space)
+    // .do(createdSpace => {
+    //   this.spacesService.addRecent.next(createdSpace);
+    // })
+    // .switchMap(createdSpace => {
+    //   return this.spaceNamespaceService
+    //     .updateConfigMap(Observable.of(createdSpace))
+    //     .map(() => createdSpace)
+    //     // Ignore any errors coming out here, we've logged and notified them earlier
+    //     .catch(err => Observable.of(createdSpace));
+    // })
+    // .subscribe(createdSpace => {
+    //     this.router.navigate([createdSpace.relationalData.creator.attributes.username,
+    //       createdSpace.attributes.name]);
+    //     this.finish();
+    //   },
+    //   err => {
+    //     this.errorHandler.handleError(err);
+    //     this.logger.error(err);
+    //     this.notifications.message(<Notification> {
+    //       message: `Failed to create "${this.space.name}"`,
+    //       type: NotificationType.DANGER
+    //     });
+    //     this.finish();
+    //   });
   }
 
   ngOnInit() {
@@ -124,6 +143,7 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
     if (srumTemplates && srumTemplates.length > 0) {
       this.selectedTemplate = srumTemplates[0];
     }
+
     this.context.current.subscribe((ctx: Context) => {
       if (ctx.space) {
         this.currentSpace = ctx.space;
