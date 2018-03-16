@@ -1,7 +1,7 @@
 import { Space } from 'ngx-fabric8-wit';
 
 export interface AppState {
-  listPage?: {
+  fabric8Context?: {
     space: Space
   };
 }

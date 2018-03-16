@@ -20,12 +20,12 @@ import { SpaceWizardComponent } from './space-wizard.component';
     CommonModule,
     FormsModule,
     Fabric8WitModule,
-    StoreModule.forFeature('listPage', {
+    StoreModule.forFeature('fabric8Context', {
       space: SpaceReducer
     }, {
-      initialState: spaceInitialState
+      initialState: {space: spaceInitialState}
     }),
-    EffectsModule.forFeature(SpaceEffects)
+    EffectsModule.forFeature([SpaceEffects])
   ],
   declarations: [
     SpaceWizardComponent,

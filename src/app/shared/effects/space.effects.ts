@@ -8,7 +8,7 @@ import {
 } from 'ngx-base';
 import { Space, SpaceAttributes, Spaces, SpaceService } from 'ngx-fabric8-wit';
 import { Observable } from 'rxjs';
-import { ADD, GET, GetError, GetSuccess } from './../actions/space.actions';
+import * as SpaceActions from './../actions/space.actions';
 
 
 @Injectable()
@@ -21,11 +21,11 @@ export class SpaceEffects {
   ) {}
 
   @Effect() getSpace$: Observable<Action> = this.actions$
-    .ofType(GET)
+    .ofType(SpaceActions.GET)
     .switchMap(action => {
       return this.spaces.current
         .map((space: Space) => {
-          return new GetSuccess(space);
+          return new SpaceActions.GetSuccess(space);
         })
         .catch(e => {
           try {
@@ -36,16 +36,16 @@ export class SpaceEffects {
           } catch (e) {
             console.log('Problem in getting space');
           }
-          return Observable.of(new GetError());
+          return Observable.of(new SpaceActions.GetError());
         });
     });
   @Effect() createSpace$: Observable<Action> = this.actions$
-    .ofType(ADD)
+    .ofType(SpaceActions.ADD)
     .switchMap((action: Action) => {
       let newSpace = this.createTransientSpace((action as any).payload.spaceName, (action as any).payload.ownerId);
       return this.spaceService.create(newSpace)
         .map((space: Space) => {
-          return new GetSuccess(space);
+          return new SpaceActions.AddSuccess(space);
         })
         .catch(e => {
           try {
@@ -56,7 +56,7 @@ export class SpaceEffects {
           } catch (e) {
             console.log('Problem in getting space');
           }
-          return Observable.of(new GetError());
+          return Observable.of(new SpaceActions.AddError());
         });
     });
 
