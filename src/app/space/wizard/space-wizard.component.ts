@@ -43,6 +43,7 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
   space: Space;
   subscriptions: Subscription[] = [];
   currentSpace: Space;
+  private error: any;
 
   constructor(
     private store: Store<AppState>,
@@ -69,9 +70,20 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
       .select('fabric8Context')
       .select('space');
      // .do(s => {if (!s) { this.store.dispatch(new SpaceActions.Get()); }});
-    // this.subscriptions.push(this.spaceSource.subscribe(e => {
-    //   console.log(`space fetched`);
-    // }));
+    this.subscriptions.push(this.spaceSource
+      .map(content => {
+        console.log('Content' + content);
+        if (!content) {
+          this.cancel();
+        } else if (content.errorMessage) {
+          this.error = {message: content.errorMessage};
+        } else if (content.attributes) {
+          this.router.navigate([content.relationalData.creator.attributes.username,
+            content.attributes.name]); // this navigation will trigger this.spaceService.addRecent
+          this.finish();
+        }
+      })
+      .subscribe(createdSpace => {}));
   }
 
   ngOnDestroy() {
@@ -81,6 +93,9 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
     this.finish();
   }
 
+  resetError() {
+    this.error = null;
+  }
   /*
    * Creates a persistent collaboration space
    * by invoking the spaceService
@@ -110,32 +125,6 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
       spaceName: this.space.name,
       ownerId: this.userService.currentLoggedInUser.id
     }));
-
-    // this.spaceService.create(this.space)
-    // .do(createdSpace => {
-    //   this.spacesService.addRecent.next(createdSpace);
-    // })
-    // .switchMap(createdSpace => {
-    //   return this.spaceNamespaceService
-    //     .updateConfigMap(Observable.of(createdSpace))
-    //     .map(() => createdSpace)
-    //     // Ignore any errors coming out here, we've logged and notified them earlier
-    //     .catch(err => Observable.of(createdSpace));
-    // })
-    // .subscribe(createdSpace => {
-    //     this.router.navigate([createdSpace.relationalData.creator.attributes.username,
-    //       createdSpace.attributes.name]);
-    //     this.finish();
-    //   },
-    //   err => {
-    //     this.errorHandler.handleError(err);
-    //     this.logger.error(err);
-    //     this.notifications.message(<Notification> {
-    //       message: `Failed to create "${this.space.name}"`,
-    //       type: NotificationType.DANGER
-    //     });
-    //     this.finish();
-    //   });
   }
 
   ngOnInit() {

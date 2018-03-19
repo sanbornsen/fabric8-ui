@@ -13,10 +13,7 @@ export class Get implements Action {
 }
 
 export class GetSuccess implements Action {
-  payload: Space;
-  constructor(payload: Space) {
-    this.payload = payload;
-  }
+  constructor(public payload: Space) {}
   readonly type = GET_SUCCESS;
 }
 
@@ -25,22 +22,17 @@ export class GetError implements Action {
 }
 
 export class Add implements Action {
-  payload: {spaceName: string, ownerId: string};
-  constructor(payload: {spaceName: string, ownerId: string}) {
-    this.payload = payload;
-  }
+  constructor(public payload: {spaceName: string, ownerId: string}) {}
   readonly type = ADD;
 }
 
 export class AddSuccess implements Action {
-  payload: Space;
-  constructor(payload: Space) {
-    this.payload = payload;
-  }
+  constructor(public payload: Space) {}
   readonly type = ADD_SUCCESS;
 }
 
 export class AddError implements Action {
+  constructor(public payload: {errorCode: string, errorMessage: string}) {}
   readonly type = ADD_ERROR;
 }
 

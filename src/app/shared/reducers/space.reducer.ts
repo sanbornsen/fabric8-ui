@@ -15,7 +15,7 @@ export const SpaceReducer: ActionReducer<SpaceState> =
         return (action as any).payload;
       }
       case SpaceActions.ADD_ERROR: {
-        return state;
+        return (action as any).payload;
       }
       default: {
         return state;

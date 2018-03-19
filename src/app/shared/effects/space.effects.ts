@@ -8,6 +8,7 @@ import {
 } from 'ngx-base';
 import { Space, SpaceAttributes, Spaces, SpaceService } from 'ngx-fabric8-wit';
 import { Observable } from 'rxjs';
+import { SpaceNamespaceService } from '../runtime-console/space-namespace.service';
 import * as SpaceActions from './../actions/space.actions';
 
 
@@ -17,6 +18,7 @@ export class SpaceEffects {
     private actions$: Actions,
     private spaces: Spaces,
     private spaceService: SpaceService,
+    private spaceNamespaceService: SpaceNamespaceService,
     private notifications: Notifications
   ) {}
 
@@ -39,15 +41,33 @@ export class SpaceEffects {
           return Observable.of(new SpaceActions.GetError());
         });
     });
+
   @Effect() createSpace$: Observable<Action> = this.actions$
     .ofType(SpaceActions.ADD)
     .switchMap((action: Action) => {
       let newSpace = this.createTransientSpace((action as any).payload.spaceName, (action as any).payload.ownerId);
       return this.spaceService.create(newSpace)
+        // TODO: ADD_SUCCESS should dispatch an UPDATE for spaceNamespace (once ngrx is implemented for spaceNamespace)
+        .switchMap(createdSpace => {
+          return this.spaceNamespaceService
+            .updateConfigMap(Observable.of(createdSpace))
+            .map(() => createdSpace)
+            .catch(err => Observable.of(createdSpace));
+        })
         .map((space: Space) => {
           return new SpaceActions.AddSuccess(space);
         })
         .catch(e => {
+          if (e.status === 409) {
+            let errorMessage: string;
+            if (e._body) {
+              let body = JSON.parse(e._body);
+              if (body) {
+                errorMessage = body.errors && body.errors.length > 0 ? body.errors[0].detail : 'Name already exists';
+              }
+            }
+            return Observable.of(new SpaceActions.AddError({errorCode: e.status, errorMessage: errorMessage}));
+          }
           try {
             this.notifications.message({
               message: `Problem in getting space`,
@@ -56,7 +76,7 @@ export class SpaceEffects {
           } catch (e) {
             console.log('Problem in getting space');
           }
-          return Observable.of(new SpaceActions.AddError());
+          return Observable.of(new SpaceActions.AddError({errorCode: e.status, errorMessage: e.detail}));
         });
     });
 
