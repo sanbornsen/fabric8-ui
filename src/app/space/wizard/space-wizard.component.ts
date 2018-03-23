@@ -21,6 +21,7 @@ import { SpaceNamespaceService } from 'app/shared/runtime-console/space-namespac
 import { SpacesService } from 'app/shared/spaces.service';
 
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
 import { FeatureTogglesService } from '../../feature-flag/service/feature-toggles.service';
 import { SpaceEffects } from '../../shared/effects/space.effects';
 import { AppState } from '../../shared/states/app.state';
@@ -79,6 +80,13 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
         } else if (content.attributes) {
           this.router.navigate([content.relationalData.creator.attributes.username,
             content.attributes.name]); // this navigation will trigger this.spaceService.addRecent
+          // TODO issue a dipatch UPDATE config map (once avaialable in ngrx).
+          // Do not move to effect
+          // TODO why do we need to update CM after space creation?
+          this.spaceNamespaceService
+              .updateConfigMap(Observable.of(content))
+              .map(() => content)
+              .catch(err => Observable.of(content));
           this.finish();
         }
       })
