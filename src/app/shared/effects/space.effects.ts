@@ -8,7 +8,7 @@ import {
 } from 'ngx-base';
 import { Space, SpaceAttributes, Spaces, SpaceService } from 'ngx-fabric8-wit';
 import { Observable } from 'rxjs';
-import { SpaceNamespaceService } from '../runtime-console/space-namespace.service';
+//import { SpaceNamespaceService } from '../runtime-console/space-namespace.service';
 import * as SpaceActions from './../actions/space.actions';
 
 
@@ -18,7 +18,7 @@ export class SpaceEffects {
     private actions$: Actions,
     private spaces: Spaces,
     private spaceService: SpaceService,
-    private spaceNamespaceService: SpaceNamespaceService,
+//    private spaceNamespaceService: SpaceNamespaceService,
     private notifications: Notifications
   ) {}
 
@@ -45,15 +45,15 @@ export class SpaceEffects {
   @Effect() createSpace$: Observable<Action> = this.actions$
     .ofType(SpaceActions.ADD)
     .switchMap((action: Action) => {
-      let newSpace = this.createTransientSpace((action as any).payload.spaceName, (action as any).payload.ownerId);
+      let newSpace = SpaceEffects.createTransientSpace((action as any).payload.spaceName, (action as any).payload.ownerId);
       return this.spaceService.create(newSpace)
         // TODO: ADD_SUCCESS should dispatch an UPDATE for spaceNamespace (once ngrx is implemented for spaceNamespace)
-        .switchMap(createdSpace => {
-          return this.spaceNamespaceService
-            .updateConfigMap(Observable.of(createdSpace))
-            .map(() => createdSpace)
-            .catch(err => Observable.of(createdSpace));
-        })
+        // .switchMap(createdSpace => {
+        //   return this.spaceNamespaceService
+        //     .updateConfigMap(Observable.of(createdSpace))
+        //     .map(() => createdSpace)
+        //     .catch(err => Observable.of(createdSpace));
+        // })
         .map((space: Space) => {
           return new SpaceActions.AddSuccess(space);
         })
@@ -80,7 +80,7 @@ export class SpaceEffects {
         });
     });
 
-  private createTransientSpace(name: string, ownerId: string): Space {
+  static createTransientSpace(name: string, ownerId: string): Space {
     let space = {} as Space;
     space.name = name;
     space.path = '';

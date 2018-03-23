@@ -10,11 +10,10 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { Broadcaster, Logger, Notification, Notifications, NotificationType } from 'ngx-base';
-import { Context, SpaceNamePipe, SpaceService } from 'ngx-fabric8-wit';
+import { Context, SpaceNamePipe } from 'ngx-fabric8-wit';
 import { ProcessTemplate } from 'ngx-fabric8-wit';
-import { Space, SpaceAttributes } from 'ngx-fabric8-wit';
+import { Space } from 'ngx-fabric8-wit';
 import { UserService } from 'ngx-login-client';
-import { Observable } from 'rxjs';
 
 import { ContextService } from 'app/shared/context.service';
 import { DummyService } from 'app/shared/dummy.service';
@@ -23,6 +22,7 @@ import { SpacesService } from 'app/shared/spaces.service';
 
 import { Store } from '@ngrx/store';
 import { FeatureTogglesService } from '../../feature-flag/service/feature-toggles.service';
+import { SpaceEffects } from '../../shared/effects/space.effects';
 import { AppState } from '../../shared/states/app.state';
 import * as SpaceActions from './../../shared/actions/space.actions';
 
@@ -51,7 +51,6 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
     private featureTogglesService: FeatureTogglesService,
     private router: Router,
     public dummy: DummyService,
-    private spaceService: SpaceService,
     private notifications: Notifications,
     private userService: UserService,
     private spaceNamespaceService: SpaceNamespaceService,
@@ -62,12 +61,12 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
     private errorHandler: ErrorHandler
   ) {
     this.spaceTemplates = dummy.processTemplates;
-    this.space = this.createTransientSpace();
+    this.space = SpaceEffects.createTransientSpace('', '');
     this.subscriptions.push(featureTogglesService.getFeature('AppLauncher').subscribe((feature) => {
       this.appLauncherEnabled = feature.attributes['enabled'] && feature.attributes['user-enabled'];
     }));
     this.spaceSource = this.store
-      .select('fabric8Context')
+      .select('fabric8-ui')
       .select('space');
      // .do(s => {if (!s) { this.store.dispatch(new SpaceActions.Get()); }});
     this.subscriptions.push(this.spaceSource
@@ -98,7 +97,6 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
   }
   /*
    * Creates a persistent collaboration space
-   * by invoking the spaceService
    */
   createSpace() {
     if (!this.userService.currentLoggedInUser && !this.userService.currentLoggedInUser.id) {
@@ -111,14 +109,8 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    // TODO atm we check the anme of a space is unique by sending http on each entry from the user
-    // is checking on the local store enough and dealing with conflict error
     console.log('Creating space', this.space, this.userService.currentLoggedInUser.id);
-    if (!this.space) {
-      this.space = this.createTransientSpace();
-    }
     this.space.attributes.name = this.space.name.replace(/ /g, '_');
-
     this.space.relationships['owned-by'].data.id = this.userService.currentLoggedInUser.id;
 
     this.store.dispatch(new SpaceActions.Add({
@@ -153,40 +145,5 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
   showAddSpaceOverlay(): void {
     this.broadcaster.broadcast('showAddSpaceOverlay', true);
     this.cancel();
-  }
-
-  private createTransientSpace(): Space {
-    let space = {} as Space;
-    space.name = '';
-    space.path = '';
-    space.attributes = new SpaceAttributes();
-    space.attributes.name = space.name;
-    space.type = 'spaces';
-    space.privateSpace = false;
-    space.process = { name: '', description: '' };
-    space.relationships = {
-      areas: {
-        links: {
-          related: ''
-        }
-      },
-      iterations: {
-        links: {
-          related: ''
-        }
-      },
-      workitemtypegroups: {
-        links: {
-          related: ''
-        }
-      },
-      'owned-by': {
-        data: {
-          id: '',
-          type: 'identities'
-        }
-      }
-    };
-    return space;
   }
 }

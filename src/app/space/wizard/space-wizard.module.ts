@@ -20,7 +20,7 @@ import { SpaceWizardComponent } from './space-wizard.component';
     CommonModule,
     FormsModule,
     Fabric8WitModule,
-    StoreModule.forFeature('fabric8Context', {
+    StoreModule.forFeature('fabric8-ui', {
       space: SpaceReducer
     }, {
       initialState: {space: spaceInitialState}
