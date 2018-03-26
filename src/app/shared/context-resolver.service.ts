@@ -10,15 +10,22 @@ import {
 import { Context, Contexts } from 'ngx-fabric8-wit';
 import { BehaviorSubject, ConnectableObservable, Observable, Subject } from 'rxjs';
 
+import { Store } from '@ngrx/store';
 import { Navigation } from '../models/navigation';
+import * as UserActions from './actions/user.actions';
 import { ContextService } from './context.service';
+import { AppState } from './states/app.state';
+import { UserState } from './states/user.state';
 
 @Injectable()
-export class ContextResolver implements Resolve<Context> {
+export class ContextResolver implements Resolve<UserState> {
 
   private _lastRoute: string;
+  private userSpaceVisitedSource: Store<AppState['fabric8-ui']['userSpaceVisited']>;
 
-  constructor(private contextService: ContextService, private router: Router) {
+  constructor(private contextService: ContextService,
+              private store: Store<AppState>,
+              private router: Router) {
     // The default place to navigate to if the context cannot be resolved
     this._lastRoute = '/_error';
     this.router.errorHandler = (err) => {
@@ -31,20 +38,44 @@ export class ContextResolver implements Resolve<Context> {
       .filter(e => e instanceof NavigationEnd)
       .map((e: NavigationEnd) => e.urlAfterRedirects)
       .subscribe(val => this._lastRoute = val);
+
+    this.userSpaceVisitedSource = this.store
+      .select('fabric8-ui')
+      .select('userSpaceVisited');
+
+    this.userSpaceVisitedSource
+      .map(content => {
+        console.log('Content' + content);
+        if (!content) {
+          // TODO
+        } else if (content.errorMessage) {
+          // TODO
+        } else if (content.attributes) {
+          // TODO
+          console.log('ContentAttribute' + content.attributes);
+          //this.buildContext({user: content, space: null} as RawContext);
+        }
+      })
+      .subscribe(createdSpace => createdSpace);
   }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Context> {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<UserState> {
     // Resolve the context
-    return this.contextService
-      .changeContext(Observable.of({
-        url: state.url,
-        user: route.params['entity'],
-        space: route.params['space']
-      } as Navigation)).first()
-      .catch((err: any, caught: Observable<Context>) => {
-        console.log(`Caught in resolver ${err}`);
-        return Observable.throw(err);
-      });
+
+    this.store.dispatch(new UserActions.Get({username: route.params['entity']}));
+    return this.userSpaceVisitedSource;
+
+
+    // return this.contextService
+    //   .changeContext(Observable.of({
+    //     url: state.url,
+    //     user: route.params['entity'],
+    //     space: route.params['space']
+    //   } as Navigation)).first()
+    //   .catch((err: any, caught: Observable<Context>) => {
+    //     console.log(`Caught in resolver ${err}`);
+    //     return Observable.throw(err);
+    //   });
   }
 
 }

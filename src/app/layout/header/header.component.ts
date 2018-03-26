@@ -88,12 +88,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     router.events.subscribe((val) => {
       if (val instanceof NavigationEnd) {
         this.broadcaster.broadcast('navigate', { url: val.url } as Navigation);
-        this.updateMenus();
+        //this.updateMenus();
       }
     });
     contexts.current.subscribe(val => {
       this._context = val;
-      this.updateMenus();
+      //this.updateMenus();
     });
     contexts.default.subscribe(val => {
       this._defaultContext = val;

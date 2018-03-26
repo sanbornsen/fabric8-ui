@@ -117,6 +117,9 @@ import { GettingStartedService } from './getting-started/services/getting-starte
 import { RavenExceptionHandler } from './shared/exception.handler';
 import { ForgeWizardModule } from './space/forge-wizard/forge-wizard.module';
 
+import { UserEffects } from './shared/effects/user.effects';
+import { initialState, UserReducer } from './shared/reducers/user.reducer';
+
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -168,6 +171,12 @@ export type StoreType = {
     PatternFlyNgModule,
     StatusListModule,
     StoreModule.forRoot({}),
+    StoreModule.forFeature('fabric8-ui', {
+      userSpaceVisited: UserReducer
+    }, {
+      initialState: {userSpaceVisited: initialState}
+    }),
+    EffectsModule.forFeature([UserEffects]),
     // AppRoutingModule must appear last
     AppRoutingModule
   ],
