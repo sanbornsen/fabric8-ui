@@ -39,43 +39,20 @@ export class ContextResolver implements Resolve<UserState> {
       .map((e: NavigationEnd) => e.urlAfterRedirects)
       .subscribe(val => this._lastRoute = val);
 
-    this.userSpaceVisitedSource = this.store
-      .select('fabric8-ui')
-      .select('userSpaceVisited');
-
-    this.userSpaceVisitedSource
-      .map(content => {
-        console.log('Content' + content);
-        if (!content) {
-          // TODO
-        } else if (content.errorMessage) {
-          // TODO
-        } else if (content.attributes) {
-          // TODO
-          console.log('ContentAttribute' + content.attributes);
-          //this.buildContext({user: content, space: null} as RawContext);
-        }
-      })
-      .subscribe(createdSpace => createdSpace);
   }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<UserState> {
-    // Resolve the context
-
     this.store.dispatch(new UserActions.Get({username: route.params['entity']}));
-    return this.userSpaceVisitedSource;
-
-
-    // return this.contextService
-    //   .changeContext(Observable.of({
-    //     url: state.url,
-    //     user: route.params['entity'],
-    //     space: route.params['space']
-    //   } as Navigation)).first()
-    //   .catch((err: any, caught: Observable<Context>) => {
-    //     console.log(`Caught in resolver ${err}`);
-    //     return Observable.throw(err);
-    //   });
+    return this.contextService
+      .changeContext(Observable.of({
+        url: state.url,
+        user: route.params['entity'],
+        space: route.params['space']
+      } as Navigation)).first()
+      .catch((err: any, caught: Observable<Context>) => {
+        console.log(`Caught in resolver ${err}`);
+        return Observable.throw(err);
+      });
   }
 
 }

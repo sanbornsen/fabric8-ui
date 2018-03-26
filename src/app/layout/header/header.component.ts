@@ -1,16 +1,18 @@
 import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-
 import { Observable, Subscription } from 'rxjs';
+import * as UserActions from '../../shared/actions/user.actions';
 
 import { Broadcaster, Logger } from 'ngx-base';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Context, Contexts } from 'ngx-fabric8-wit';
 import { AuthenticationService, User, UserService } from 'ngx-login-client';
 
+import { Store } from '@ngrx/store';
 import { Navigation } from '../../models/navigation';
 import { DummyService } from '../../shared/dummy.service';
 import { LoginService } from '../../shared/login.service';
+import { AppState } from '../../shared/states/app.state';
 import { MenuedContextType } from './menued-context-type';
 
 interface MenuHiddenCallback {
@@ -34,7 +36,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       let bool = this.isIn;
       this.isIn = bool === false ? true : false;
   }
-
+  private userSpaceVisitedSource: Store<AppState['fabric8-ui']['userSpaceVisited']>;
   onStatusListVisible = (flag: boolean) => {
     this.statusListVisible = flag;
   }
@@ -72,6 +74,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private space: string;
 
   constructor(
+    private store: Store<AppState>,
     public router: Router,
     public route: ActivatedRoute,
     private userService: UserService,
@@ -85,6 +88,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {
     this.space = '';
     this.selectedFlow = 'start';
+
+    this.userSpaceVisitedSource = this.store
+      .select('fabric8-ui')
+      .select('userSpaceVisited');
+
+    this.userSpaceVisitedSource
+      .map(content => {
+        console.log('Content' + content);
+        if (!content) {
+          // TODO
+        } else if (content.errorMessage) {
+          // TODO
+        } else if (content.attributes) {
+          // TODO
+          console.log('ContentAttribute' + content.attributes);
+          //this.buildContext({user: content, space: null} as RawContext);
+        }
+      })
+      .subscribe(userSpace => {
+        console.log('New USerContext' + userSpace);
+      });
+
+
     router.events.subscribe((val) => {
       if (val instanceof NavigationEnd) {
         this.broadcaster.broadcast('navigate', { url: val.url } as Navigation);
