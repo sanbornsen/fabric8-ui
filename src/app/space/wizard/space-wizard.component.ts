@@ -67,7 +67,6 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
       this.appLauncherEnabled = feature.attributes['enabled'] && feature.attributes['user-enabled'];
     }));
     this.spaceSource = this.store
-      .select('fabric8-ui')
       .select('spaceContext')
       .select('currentSpace');
     this.subscriptions.push(this.spaceSource

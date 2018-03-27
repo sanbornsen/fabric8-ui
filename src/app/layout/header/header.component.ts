@@ -36,8 +36,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.isIn = bool === false ? true : false;
   }
 
-  private currentSpace: Store<AppState['fabric8-ui']['spaceContext']['currentSpace']>;
-  private currentEntity: Store<AppState['fabric8-ui']['spaceContext']['currentEntity']>;
+  private currentSpace: Store<AppState['spaceContext']['currentSpace']>;
+  private currentEntity: Store<AppState['spaceContext']['currentEntity']>;
   onStatusListVisible = (flag: boolean) => {
     this.statusListVisible = flag;
   }
@@ -89,32 +89,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.selectedFlow = 'start';
 
     this.currentSpace = this.store
-      .select('fabric8-ui')
       .select('spaceContext')
       .select('currentSpace');
     this.currentEntity = this.store
-      .select('fabric8-ui')
       .select('spaceContext')
       .select('currentEntity');
 
-    // this.currentSpace
-    //   .map(content => {
-    //     console.log('Content' + content);
-    //     if (!content) {
-    //       // TODO
-    //     //} else if (content.errorMessage ) {
-    //       // TODO error fetching user
-    //     } else if (content.attributes) {
-    //       // TODO
-    //       console.log('Displaying USER Space' + content.attributes.name);
-    //       //this.buildContext({user: content, space: null} as RawContext);
-    //     } else if (content.attributes) {
-    //       console.log('Displaying SPACE Space' + content.attributes.name);
-    //     }
-    //   })
-      // .subscribe(userSpace => {
-      //   console.log('New USerContext');
-      // });
+    this.currentSpace
+      .map(content => {
+        console.log('Content' + content);
+        if (!content) {
+          // TODO
+        //} else if (content.errorMessage ) {
+          // TODO error fetching user
+        } else if (content.attributes) {
+          // TODO
+          console.log('Displaying USER Space' + content.attributes.name);
+          //this.buildContext({user: content, space: null} as RawContext);
+        } else if (content.attributes) {
+          console.log('Displaying SPACE Space' + content.attributes.name);
+        }
+      })
+      .subscribe(userSpace => {
+        console.log('New USerContext');
+      });
 
 
     router.events.subscribe((val) => {

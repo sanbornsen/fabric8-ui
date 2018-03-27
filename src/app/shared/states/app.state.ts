@@ -8,13 +8,5 @@ import { SpaceContextState } from './space-context.state';
 export const initialAppState: AppState | null = null;
 
 export interface AppState {
-  'fabric8-ui'?: {
-    spaceContext?: SpaceContextState,
-    userContext: {
-      loggedInuser: UserState,
-      featureflags: Feature[],
-      menus: MenuItem[]
-    }
-
-  };
+    spaceContext?: SpaceContextState
 }
