@@ -8,22 +8,22 @@ export const SpaceReducer: ActionReducer<SpaceState> =
       case SpaceActions.GET_SUCCESS: {
         const stateString = JSON.stringify(state);
         console.log(`SpaceActions.SUCCESS ${JSON.stringify(stateString)}`);
-        return (action as any).payload;
+        return {...(action as any).payload};
       }
       case SpaceActions.GET_ERROR: {
         const stateString = JSON.stringify(state);
         console.log(`SpaceActions.GET_ERROR ${JSON.stringify(stateString)}`);
-        return (action as any).payload;
+        return {...(action as any).payload};
       }
       case SpaceActions.ADD_SUCCESS: {
         const stateString = JSON.stringify(state);
         console.log(`SpaceActions.ADD_SUCCESS ${JSON.stringify(stateString)}`);
-        return (action as any).payload;
+        return {...(action as any).payload};
       }
       case SpaceActions.ADD_ERROR: {
         const stateString = JSON.stringify(state);
         console.log(`SpaceActions.ADD_ERROR ${JSON.stringify(stateString)}`);
-        return (action as any).payload;
+        return {...(action as any).payload};
       }
       default: {
         const stateString = JSON.stringify(state);

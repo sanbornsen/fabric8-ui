@@ -19,7 +19,7 @@ import { SpaceWizardComponent } from './space-wizard.component';
     CommonModule,
     FormsModule,
     Fabric8WitModule,
-    StoreModule.forFeature('spaceContext', {
+    StoreModule.forFeature('fabric8-ui', {
       currentSpace: SpaceReducer
 
     }, {

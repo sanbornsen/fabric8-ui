@@ -10,4 +10,4 @@ export class UserState implements User {
   errorMessage: string;
 }
 
-export const initialState: UserState | null = null;
+export const initialUserState: UserState | null = null;

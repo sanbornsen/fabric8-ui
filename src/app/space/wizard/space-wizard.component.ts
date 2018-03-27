@@ -23,9 +23,9 @@ import { SpacesService } from 'app/shared/spaces.service';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { FeatureTogglesService } from '../../feature-flag/service/feature-toggles.service';
+import * as SpaceActions from '../../shared/actions/space.actions';
 import { SpaceEffects } from '../../shared/effects/space.effects';
 import { AppState } from '../../shared/states/app.state';
-import * as SpaceActions from './../../shared/actions/space.actions';
 
 @Component({
   selector: 'space-wizard',
@@ -67,7 +67,7 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
       this.appLauncherEnabled = feature.attributes['enabled'] && feature.attributes['user-enabled'];
     }));
     this.spaceSource = this.store
-      .select('spaceContext')
+      .select('fabric8-ui')
       .select('currentSpace');
     this.subscriptions.push(this.spaceSource
       .map(content => {

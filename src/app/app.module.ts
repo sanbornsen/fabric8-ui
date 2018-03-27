@@ -120,8 +120,10 @@ import { ForgeWizardModule } from './space/forge-wizard/forge-wizard.module';
 import { SpaceContextEffects } from './shared/effects/space-context.effects';
 import { SpaceEffects } from './shared/effects/space.effects';
 import { UserEffects } from './shared/effects/user.effects';
-import { SpaceContextReducer } from './shared/reducers/space-context.reducer';
-import { initialSpaceContextState } from './shared/states/space-context.state';
+import { SpaceReducer } from './shared/reducers/space.reducer';
+import { UserReducer } from './shared/reducers/user.reducer';
+import { initialSpaceState } from './shared/states/space.state';
+import { initialUserState } from './shared/states/user.state';
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -173,10 +175,12 @@ export type StoreType = {
     PatternFlyNgModule,
     StatusListModule,
     StoreModule.forRoot({
-      spaceContext: SpaceContextReducer
+      currentSpace: SpaceReducer,
+      currentEntity: UserReducer
     }, {
       initialState: {
-        spaceContext: initialSpaceContextState
+        currentSpace: initialSpaceState,
+        currentEntity: initialUserState
       }
     }),
     // AppRoutingModule must appear last

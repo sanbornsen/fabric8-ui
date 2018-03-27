@@ -36,8 +36,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.isIn = bool === false ? true : false;
   }
 
-  private currentSpace: Store<AppState['spaceContext']['currentSpace']>;
-  private currentEntity: Store<AppState['spaceContext']['currentEntity']>;
+  private currentSpace: Store<AppState['fabric8-ui']['currentSpace']>;
+  private currentEntity: Store<AppState['fabric8-ui']['currentEntity']>;
   onStatusListVisible = (flag: boolean) => {
     this.statusListVisible = flag;
   }
@@ -88,16 +88,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.space = '';
     this.selectedFlow = 'start';
 
-    //this.currentSpace = this.store;
-      // .select('spaceContext')
-      // .select('currentSpace');
-    //this.currentEntity = this.store;
-      // .select('spaceContext')
-      // .select('currentEntity');
+    this.currentSpace = this.store
+      .select('fabric8-ui')
+      .select('currentSpace');
+    this.currentEntity = this.store
+      .select('fabric8-ui')
+      .select('currentEntity');
 
     this.store
       .map(content => {
-        console.log(':::::::::::::::::Header.component =  ' + content);
+        console.log(':::::::::::::::::Header.component ALL STATE =  ' + JSON.stringify(content));
         // if (!content) {
         //   // TODO
         // //} else if (content.errorMessage ) {

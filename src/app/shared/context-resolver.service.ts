@@ -12,7 +12,8 @@ import { Observable } from 'rxjs';
 
 import { Store } from '@ngrx/store';
 import { Navigation } from '../models/navigation';
-import * as SpaceContextActions from './actions/space-context.actions';
+import * as SpaceActions from './actions/space.actions';
+import * as UserActions from './actions/user.actions';
 import { ContextService } from './context.service';
 import { AppState } from './states/app.state';
 import { UserState } from './states/user.state';
@@ -42,11 +43,18 @@ export class ContextResolver implements Resolve<UserState> {
   }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<UserState> {
-    //this.store.dispatch(new UserActions.Get({username: route.params['entity']}));
-    this.store.dispatch(new SpaceContextActions.Get({
-      username: route.params['entity'],
-      spacename: route.params['space']
-    }));
+    const username = route.params['entity'];
+    const spacename = route.params['space'];
+    if (username && spacename) {
+      this.store.dispatch(new SpaceActions.Get({username, spacename}));
+    } else if (username) {
+      this.store.dispatch(new UserActions.Get({username}));
+    }
+
+    // this.store.dispatch(new SpaceContextActions.Get({
+    //   username: route.params['entity'],
+    //   spacename: route.params['space']
+    // }));
     return this.contextService
       .changeContext(Observable.of({
         url: state.url,

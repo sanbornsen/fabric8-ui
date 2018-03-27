@@ -46,25 +46,25 @@ export class AddSpaceOverlayComponent implements OnInit {
               private broadcaster: Broadcaster) {
     this.spaceTemplates = dummy.processTemplates;
     this.space = SpaceEffects.createTransientSpace('', '');
-    this.spaceSource = this.store
-      .select('spaceContext')
-      .select('currentSpace');
+    // this.spaceSource = this.store
+    //   .select('spaceContext')
+    //   .select('currentSpace');
     // .do(s => {if (!s) { this.store.dispatch(new SpaceActions.Get()); }});
-    this.subscriptions.push(this.spaceSource
-      .map(content => {
-        console.log('Content' + content);
-        if (!content) {
-          // do nothing
-        } else if (content.errorMessage) {
-          this.error = {message: content.errorMessage};
-        } else if (content.attributes) {
-          this.router.navigate([content.relationalData.creator.attributes.username,
-            content.attributes.name]); // this navigation will trigger this.spaceService.addRecent
-          this.showAddAppOverlay();
-          this.hideAddSpaceOverlay();
-        }
-      })
-      .subscribe(createdSpace => {}));
+    // this.subscriptions.push(this.spaceSource
+    //   .map(content => {
+    //     console.log('Content' + content);
+    //     if (!content) {
+    //       // do nothing
+    //     } else if (content.errorMessage) {
+    //       this.error = {message: content.errorMessage};
+    //     } else if (content.attributes) {
+    //       this.router.navigate([content.relationalData.creator.attributes.username,
+    //         content.attributes.name]); // this navigation will trigger this.spaceService.addRecent
+    //       this.showAddAppOverlay();
+    //       this.hideAddSpaceOverlay();
+    //     }
+    //   })
+    //   .subscribe(createdSpace => {}));
   }
 
   ngOnInit() {

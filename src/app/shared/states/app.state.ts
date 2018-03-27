@@ -1,5 +1,9 @@
-import { SpaceContextState } from './space-context.state';
+import { SpaceState } from './space.state';
+import { UserState } from './user.state';
 
 export interface AppState {
-    spaceContext?: SpaceContextState
+  'fabric8-ui': {
+    currentSpace: SpaceState;
+    currentEntity: UserState;
+  };
 }
