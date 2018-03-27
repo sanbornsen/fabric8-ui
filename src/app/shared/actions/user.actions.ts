@@ -23,26 +23,8 @@ export class GetError implements Action {
   readonly type = GET_ERROR;
 }
 
-export class Update implements Action {
-  constructor(public payload: {id: string, fullName: string, imageURL: string, username: string}) {}
-  readonly type = UPDATE;
-}
-
-export class UpdateSuccess implements Action {
-  constructor(public payload: User) {}
-  readonly type = UPDATE_SUCCESS;
-}
-
-export class UpdateError implements Action {
-  constructor(public payload: {errorCode: string, errorMessage: string}) {}
-  readonly type = UPDATE_ERROR;
-}
-
 export type All
   = Get
   | GetSuccess
-  | GetError
-  | Update
-  | UpdateSuccess
-  | UpdateError;
+  | GetError;
 

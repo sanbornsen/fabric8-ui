@@ -88,30 +88,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.space = '';
     this.selectedFlow = 'start';
 
-    this.currentSpace = this.store
-      .select('spaceContext')
-      .select('currentSpace');
-    this.currentEntity = this.store
-      .select('spaceContext')
-      .select('currentEntity');
+    //this.currentSpace = this.store;
+      // .select('spaceContext')
+      // .select('currentSpace');
+    //this.currentEntity = this.store;
+      // .select('spaceContext')
+      // .select('currentEntity');
 
-    this.currentSpace
+    this.store
       .map(content => {
-        console.log('Content' + content);
-        if (!content) {
-          // TODO
-        //} else if (content.errorMessage ) {
-          // TODO error fetching user
-        } else if (content.attributes) {
-          // TODO
-          console.log('Displaying USER Space' + content.attributes.name);
-          //this.buildContext({user: content, space: null} as RawContext);
-        } else if (content.attributes) {
-          console.log('Displaying SPACE Space' + content.attributes.name);
-        }
+        console.log(':::::::::::::::::Header.component =  ' + content);
+        // if (!content) {
+        //   // TODO
+        // //} else if (content.errorMessage ) {
+        //   // TODO error fetching user
+        // } else if (content.attributes) {
+        //   // TODO
+        //   console.log('Displaying USER Space' + content.attributes.name);
+        //   //this.buildContext({user: content, space: null} as RawContext);
+        // } else if (content.attributes) {
+        //   console.log('Displaying SPACE Space' + content.attributes.name);
+        // }
       })
       .subscribe(userSpace => {
-        console.log('New USerContext');
+        console.log(':::::::::::::::::Header.component:subscribe');
       });
 
 
