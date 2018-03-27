@@ -69,7 +69,6 @@ export class SpaceWizardComponent implements OnInit, OnDestroy {
     this.spaceSource = this.store
       .select('fabric8-ui')
       .select('space');
-     // .do(s => {if (!s) { this.store.dispatch(new SpaceActions.Get()); }});
     this.subscriptions.push(this.spaceSource
       .map(content => {
         console.log('Content' + content);

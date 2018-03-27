@@ -117,8 +117,11 @@ import { GettingStartedService } from './getting-started/services/getting-starte
 import { RavenExceptionHandler } from './shared/exception.handler';
 import { ForgeWizardModule } from './space/forge-wizard/forge-wizard.module';
 
+import { SpaceEffects } from './shared/effects/space.effects';
 import { UserEffects } from './shared/effects/user.effects';
+import { SpaceReducer } from './shared/reducers/space.reducer';
 import { initialState, UserReducer } from './shared/reducers/user.reducer';
+import { initialState as spaceInitialState } from './shared/states/space.state';
 
 
 // Application wide providers
@@ -148,7 +151,7 @@ export type StoreType = {
     BrowserModule,
     BsDropdownModule.forRoot(),
     ChartModule,
-    EffectsModule.forRoot([]),
+    EffectsModule.forRoot([SpaceEffects, UserEffects]),
     EmptyStateModule,
     FormsModule,
     HttpModule,
@@ -170,13 +173,13 @@ export type StoreType = {
     WidgetsModule,
     PatternFlyNgModule,
     StatusListModule,
-    StoreModule.forRoot({}),
-    StoreModule.forFeature('fabric8-ui', {
+    StoreModule.forRoot({
+      space: SpaceReducer,
       userSpaceVisited: UserReducer
+
     }, {
-      initialState: {userSpaceVisited: initialState}
+      initialState: {space: spaceInitialState, userSpaceVisited: initialState}
     }),
-    EffectsModule.forFeature([UserEffects]),
     // AppRoutingModule must appear last
     AppRoutingModule
   ],

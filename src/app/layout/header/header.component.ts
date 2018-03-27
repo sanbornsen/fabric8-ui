@@ -36,7 +36,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
       let bool = this.isIn;
       this.isIn = bool === false ? true : false;
   }
+
   private userSpaceVisitedSource: Store<AppState['fabric8-ui']['userSpaceVisited']>;
+
   onStatusListVisible = (flag: boolean) => {
     this.statusListVisible = flag;
   }

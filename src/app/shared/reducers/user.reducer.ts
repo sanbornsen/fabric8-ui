@@ -8,10 +8,10 @@ export const UserReducer: ActionReducer<UserState> =
   (state = initialState, action: Action) => {
     switch (action.type) {
       case UserActions.GET: {
-        return (action as any).payload;
+        return {...(action as any).payload};
       }
       case UserActions.GET_SUCCESS: {
-        return (action as any).payload;
+        return {...(action as any).payload};
       }
       case UserActions.GET_ERROR: {
         return (action as any).payload;

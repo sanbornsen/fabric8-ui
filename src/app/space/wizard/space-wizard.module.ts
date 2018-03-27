@@ -7,8 +7,8 @@ import { initialState as spaceInitialState } from '../../shared/states/space.sta
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { SpaceEffects } from '../../shared/effects/space.effects';
+import { UserEffects } from '../../shared/effects/user.effects';
 import { SpaceReducer } from '../../shared/reducers/space.reducer';
-import { AddSpaceOverlayModule } from '../add-space-overlay/add-space-overlay.module';
 import { CodebasesService } from '../create/codebases/services/codebases.service';
 import { TrustHtmlPipe, TrustStylePipe } from './pipes/safe-html.pipe';
 import { SelectedItemsPipe } from './pipes/selected-items.pipe';
@@ -22,10 +22,11 @@ import { SpaceWizardComponent } from './space-wizard.component';
     Fabric8WitModule,
     StoreModule.forFeature('fabric8-ui', {
       space: SpaceReducer
+
     }, {
-      initialState: {space: spaceInitialState}
+      initialState: {space: spaceInitialState  }
     }),
-    EffectsModule.forFeature([SpaceEffects])
+    EffectsModule.forFeature([SpaceEffects, UserEffects])
   ],
   declarations: [
     SpaceWizardComponent,
