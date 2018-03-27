@@ -7,21 +7,21 @@ import {
   RouterStateSnapshot
 } from '@angular/router';
 
-import { Context, Contexts } from 'ngx-fabric8-wit';
-import { BehaviorSubject, ConnectableObservable, Observable, Subject } from 'rxjs';
+import { Context } from 'ngx-fabric8-wit';
+import { Observable } from 'rxjs';
 
 import { Store } from '@ngrx/store';
 import { Navigation } from '../models/navigation';
-import * as UserActions from './actions/user.actions';
+import * as SpaceContextActions from './actions/space-context.actions';
 import { ContextService } from './context.service';
 import { AppState } from './states/app.state';
 import { UserState } from './states/user.state';
+
 
 @Injectable()
 export class ContextResolver implements Resolve<UserState> {
 
   private _lastRoute: string;
-  private userSpaceVisitedSource: Store<AppState['fabric8-ui']['userSpaceVisited']>;
 
   constructor(private contextService: ContextService,
               private store: Store<AppState>,
@@ -42,7 +42,11 @@ export class ContextResolver implements Resolve<UserState> {
   }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<UserState> {
-    this.store.dispatch(new UserActions.Get({username: route.params['entity']}));
+    //this.store.dispatch(new UserActions.Get({username: route.params['entity']}));
+    this.store.dispatch(new SpaceContextActions.Get({
+      username: route.params['entity'],
+      spacename: route.params['space']
+    }));
     return this.contextService
       .changeContext(Observable.of({
         url: state.url,

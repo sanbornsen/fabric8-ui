@@ -117,12 +117,11 @@ import { GettingStartedService } from './getting-started/services/getting-starte
 import { RavenExceptionHandler } from './shared/exception.handler';
 import { ForgeWizardModule } from './space/forge-wizard/forge-wizard.module';
 
+import { SpaceContextEffects } from './shared/effects/space-context.effects';
 import { SpaceEffects } from './shared/effects/space.effects';
 import { UserEffects } from './shared/effects/user.effects';
-import { SpaceReducer } from './shared/reducers/space.reducer';
-import { initialState, UserReducer } from './shared/reducers/user.reducer';
-import { initialState as spaceInitialState } from './shared/states/space.state';
-
+import { SpaceContextReducer } from './shared/reducers/space-context.reducer';
+import { initialSpaceContextState } from './shared/states/space-context.state';
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -151,7 +150,7 @@ export type StoreType = {
     BrowserModule,
     BsDropdownModule.forRoot(),
     ChartModule,
-    EffectsModule.forRoot([SpaceEffects, UserEffects]),
+    EffectsModule.forRoot([SpaceEffects, UserEffects, SpaceContextEffects]),
     EmptyStateModule,
     FormsModule,
     HttpModule,
@@ -174,11 +173,11 @@ export type StoreType = {
     PatternFlyNgModule,
     StatusListModule,
     StoreModule.forRoot({
-      space: SpaceReducer,
-      userSpaceVisited: UserReducer
-
+      spaceContext: SpaceContextReducer
     }, {
-      initialState: {space: spaceInitialState, userSpaceVisited: initialState}
+      initialState: {
+        spaceContext: initialSpaceContextState
+      }
     }),
     // AppRoutingModule must appear last
     AppRoutingModule

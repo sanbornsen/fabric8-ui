@@ -9,6 +9,7 @@ export const ADD_ERROR    = '[space] AddError';
 export const ADD_SUCCESS  = '[space] AddSuccess';
 
 export class Get implements Action {
+  constructor(public payload: {username: string, spacename: string}) {}
   readonly type = GET;
 }
 
@@ -18,6 +19,7 @@ export class GetSuccess implements Action {
 }
 
 export class GetError implements Action {
+  constructor(public payload: {errorMessage: string}) {}
   readonly type = GET_ERROR;
 }
 

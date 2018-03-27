@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import * as UserActions from '../../shared/actions/user.actions';
 
 import { Broadcaster, Logger } from 'ngx-base';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -37,16 +36,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.isIn = bool === false ? true : false;
   }
 
-  private userSpaceVisitedSource: Store<AppState['fabric8-ui']['userSpaceVisited']>;
-
+  private currentSpace: Store<AppState['fabric8-ui']['spaceContext']['currentSpace']>;
+  private currentEntity: Store<AppState['fabric8-ui']['spaceContext']['currentEntity']>;
   onStatusListVisible = (flag: boolean) => {
     this.statusListVisible = flag;
   }
-
   onDocumentationListVisible = (flag: boolean) => {
     this.documentationListVisible = flag;
   }
-
   menuCallbacks = new Map<String, MenuHiddenCallback>([
     [
       '_settings', function(headerComponent) {
@@ -91,26 +88,33 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.space = '';
     this.selectedFlow = 'start';
 
-    this.userSpaceVisitedSource = this.store
+    this.currentSpace = this.store
       .select('fabric8-ui')
-      .select('userSpaceVisited');
+      .select('spaceContext')
+      .select('currentSpace');
+    this.currentEntity = this.store
+      .select('fabric8-ui')
+      .select('spaceContext')
+      .select('currentEntity');
 
-    this.userSpaceVisitedSource
-      .map(content => {
-        console.log('Content' + content);
-        if (!content) {
-          // TODO
-        } else if (content.errorMessage) {
-          // TODO
-        } else if (content.attributes) {
-          // TODO
-          console.log('ContentAttribute' + content.attributes);
-          //this.buildContext({user: content, space: null} as RawContext);
-        }
-      })
-      .subscribe(userSpace => {
-        console.log('New USerContext' + userSpace);
-      });
+    // this.currentSpace
+    //   .map(content => {
+    //     console.log('Content' + content);
+    //     if (!content) {
+    //       // TODO
+    //     //} else if (content.errorMessage ) {
+    //       // TODO error fetching user
+    //     } else if (content.attributes) {
+    //       // TODO
+    //       console.log('Displaying USER Space' + content.attributes.name);
+    //       //this.buildContext({user: content, space: null} as RawContext);
+    //     } else if (content.attributes) {
+    //       console.log('Displaying SPACE Space' + content.attributes.name);
+    //     }
+    //   })
+      // .subscribe(userSpace => {
+      //   console.log('New USerContext');
+      // });
 
 
     router.events.subscribe((val) => {

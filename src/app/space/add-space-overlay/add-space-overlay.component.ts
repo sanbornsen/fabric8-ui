@@ -48,7 +48,8 @@ export class AddSpaceOverlayComponent implements OnInit {
     this.space = SpaceEffects.createTransientSpace('', '');
     this.spaceSource = this.store
       .select('fabric8-ui')
-      .select('space');
+      .select('spaceContext')
+      .select('currentSpace');
     // .do(s => {if (!s) { this.store.dispatch(new SpaceActions.Get()); }});
     this.subscriptions.push(this.spaceSource
       .map(content => {

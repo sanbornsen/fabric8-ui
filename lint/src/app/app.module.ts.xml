@@ -1,18 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <checkstyle version="5.7">[122, 1]: Import sources within a group must be alphabetized.
-[125, 1]: Import sources within a group must be alphabetized.
-[121, 27]: " should be '
-[122, 28]: " should be '
-[123, 41]: " should be '
-[124, 49]: " should be '
-[125, 28]: " should be '
-[121, 20]: missing whitespace
-[121, 9]: missing whitespace
-[122, 21]: missing whitespace
-[122, 9]: missing whitespace
-[123, 9]: missing whitespace
-[123, 34]: missing whitespace
-[124, 42]: missing whitespace
-[125, 21]: missing whitespace
-[125, 9]: missing whitespace
 </checkstyle>

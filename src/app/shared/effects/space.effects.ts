@@ -10,7 +10,6 @@ import { Space, SpaceAttributes, Spaces, SpaceService } from 'ngx-fabric8-wit';
 import { Observable } from 'rxjs';
 import * as SpaceActions from './../actions/space.actions';
 
-
 @Injectable()
 export class SpaceEffects {
   constructor(
@@ -23,22 +22,18 @@ export class SpaceEffects {
   @Effect() getSpace$: Observable<Action> = this.actions$
     .ofType(SpaceActions.GET)
     .switchMap(action => {
-      return this.spaces.current
-        .map((space: Space) => {
-          return new SpaceActions.GetSuccess(space);
-        })
-        .catch(e => {
-          try {
-            this.notifications.message({
-              message: `Problem in getting space`,
-              type: NotificationType.DANGER
-            } as Notification);
-          } catch (e) {
-            console.log('Problem in getting space');
+      let username = (action as any).payload.username;
+      let spacename = (action as any).payload.spacename;
+      return this.spaceService.getSpaceByName(username, spacename)
+        .map(val => {
+          if (val && val.id) {
+            return new SpaceActions.GetSuccess(val);
+          } else {
+            Observable.of(new SpaceActions.GetError({errorMessage: `No user found for ${username}`}));
           }
-          return Observable.of(new SpaceActions.GetError());
         });
     });
+
 
   @Effect() createSpace$: Observable<Action> = this.actions$
     .ofType(SpaceActions.ADD)
