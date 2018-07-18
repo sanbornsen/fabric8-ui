@@ -123,6 +123,7 @@ import { GettingStartedService } from './getting-started/services/getting-starte
 import { RavenExceptionHandler } from './shared/exception.handler';
 import { togglesApiUrlProvider } from './shared/toggles.api.provider';
 
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { HttpInterceptorProviders } from './shared/interceptors/index';
 import { RequestCache } from './shared/request-cache.service';
 
@@ -173,6 +174,9 @@ export type StoreType = {
     StackDetailsModule,
     WidgetsModule,
     StoreModule.forRoot({}),
+    StoreDevtoolsModule.instrument({
+      maxAge: 250 // Retains last 25 states
+    }),
     AppRoutingModule,
     // Must be at the end
 
